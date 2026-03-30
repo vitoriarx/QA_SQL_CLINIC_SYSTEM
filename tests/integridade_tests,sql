@@ -1,0 +1,29 @@
+--Arquivo: integridade_tests.sql
+--Objetivo: Validar regras de negocio e consistencia entre tabelas
+
+--CT01: Valida que todas as consultas possuem um pagamento associado
+--Regra: Toda consulta deve ter um pagamento registrado
+SELECT c.id
+FROM consultas c
+LEFT JOIN pagamentos p ON p.consulta_id = c.id
+WHERE p.id IS NULL;
+
+--CT02: Valida que nao existe pagamento sem data quando o status for 'Pago'
+--Regra: Se o status do pagamento for 'Pago', a data_pagamento nao pode ser nula
+SELECT *
+FROM pagamentos
+WHERE status = 'Pago' AND data_pagamento IS NULL;
+
+--CT03: Valida que nao existe pagamento com anterior a data da consulta
+--Regra: A data_pagamento nao pode ser anterior a data da consulta associada
+SELECT p.*
+FROM pagamentos p
+JOIN consultas c ON p.consulta_id = c.id
+WHERE p.data_pagamento < c.data_consulta;
+
+--CT04: Valida que não existe múltiplos pagamentos para a mesma consulta
+--Regra: Cada consulta deve ter no máximo um pagamento associado
+SELECT p.consulta_id, COUNT(*)
+FROM pagamentos p
+GROUP BY p.consulta_id
+HAVING COUNT(*) > 1;
