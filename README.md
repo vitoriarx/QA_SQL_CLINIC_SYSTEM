@@ -1,4 +1,4 @@
-# Teste de SQL - Sitema de clínica
+# Teste de SQL - Sistema de clínica
 
 ## Contexto do que irá ser testado
 
